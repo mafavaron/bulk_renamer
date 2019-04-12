@@ -38,43 +38,44 @@ def textReplace(current_doc_name, new_doc_name, site, ru, prov, report_file):
         success = False
 
     # Iterate over document header contents
-    for sect in range(len(document.sections)):
-        section = document.sections[sect]
-
-        # Header: Change file name to be consistent with actual
-        for par in section.header.paragraphs:
-            preamble   = new_preamble[prov]
-            prefix     = "Allegato \""
-            postfix    = "\""
-            new_name   = os.path.basename(new_doc_name).split(".")[0]
-            new_para   = preamble + prefix + new_name + postfix
-            par.text   = new_para
-
-    # Find station name
-    for par in document.paragraphs:
-        if "Stazione" in par.text:
-            blocks = par.text.split("“")
-            if len(blocks) >= 2:
-                parts = blocks[1].split("”")
-                if len(parts) >= 2:
-                    par.text = blocks[0] + "“" + site + "”" + parts[1]
-
-    # Table on initial page:
-    if len(document.tables) <= 0:
-        success = False
-    else:
-        row_num = -1
-        first_table = document.tables[0]
-        for row in first_table.rows:
-            row_num += 1
-            if len(row.cells) >= 2:
-                title = row.cells[0].text
-                if "sopralluogo" in title:
-                    row.cells[1].text = new_doc_name.replace("docx", "pdf")
-
-    # Save new document
     if success:
-        document.save(out_path)
+        for sect in range(len(document.sections)):
+            section = document.sections[sect]
+
+            # Header: Change file name to be consistent with actual
+            for par in section.header.paragraphs:
+                preamble   = new_preamble[prov]
+                prefix     = "Allegato \""
+                postfix    = "\""
+                new_name   = os.path.basename(new_doc_name).split(".")[0]
+                new_para   = preamble + prefix + new_name + postfix
+                par.text   = new_para
+
+        # Find station name
+        for par in document.paragraphs:
+            if "Stazione" in par.text:
+                blocks = par.text.split("“")
+                if len(blocks) >= 2:
+                    parts = blocks[1].split("”")
+                    if len(parts) >= 2:
+                        par.text = blocks[0] + "“" + site + "”" + parts[1]
+
+        # Table on initial page:
+        if len(document.tables) <= 0:
+            success = False
+        else:
+            row_num = -1
+            first_table = document.tables[0]
+            for row in first_table.rows:
+                row_num += 1
+                if len(row.cells) >= 2:
+                    title = row.cells[0].text
+                    if "sopralluogo" in title:
+                        row.cells[1].text = new_doc_name.replace("docx", "pdf")
+
+        # Save new document
+        if success:
+            document.save(out_path)
 
     # Save data
     if success:
