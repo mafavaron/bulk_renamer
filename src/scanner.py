@@ -16,6 +16,11 @@ new_preamble = {
 
 def textReplace(current_doc_name, new_doc_name, site, ru, prov, report_file):
 
+    # Check there is something to do
+    if current_doc_name == new_doc_name:
+        report_file.write("Old file %s not processed: nothing to do.\n" % current_doc_name)
+        return
+
     # Form input and output directory names
     type = ru[-3:-2]
     in_path  = os.path.join(".", "Schede_Stazione_Vecchie", "Tipo_%s" % type, prov, current_doc_name)
@@ -76,6 +81,8 @@ def textReplace(current_doc_name, new_doc_name, site, ru, prov, report_file):
         report_file.write("Old file %s successfully processed.\n" % current_doc_name)
     else:
         report_file.write("Old file %s <<<<<<<<<< Error >>>>>>>>>>>>>>>>\n" % current_doc_name)
+
+    return
 
 
 if __name__ == "__main__":
